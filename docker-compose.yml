@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: todo-db
+    environment:
+      MYSQL_DATABASE: todo
+      MYSQL_USER: devuser
+      MYSQL_PASSWORD: 4467996m
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - todo-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p", "root" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  app:
+    build: .
+    container_name: todo-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - todo-network
+
+
+
+volumes:
+  db-data:
+
+networks:
+  todo-network:
